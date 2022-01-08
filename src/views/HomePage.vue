@@ -1,67 +1,52 @@
 <template>
-  <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>Blank</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-      </ion-header>
-    
-      <div id="container">
-        <strong>Ready to create an app?</strong>
-        <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-      </div>
-    </ion-content>
-  </ion-page>
+  <section class="ion-padding">
+    <ion-button @click="presentLoading" class="ion-margin-top"
+      >Show Loading</ion-button
+    >
+    <br />
+    <ion-button @click="presentLoadingWithOptions">Show Loading</ion-button>
+  </section>
 </template>
 
-<script lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
-import { defineComponent } from 'vue';
+<script>
+import { IonButton, loadingController } from "@ionic/vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  components: {
-    IonContent,
-    IonHeader,
-    IonPage,
-    IonTitle,
-    IonToolbar
-  }
+  props: {
+    timeout: { type: Number, default: 100000 },
+  },
+  methods: {
+    async presentLoading() {
+      const loading = await loadingController.create({
+        cssClass: "my-custom-class",
+        message: "Please wait...",
+        duration: this.timeout,
+      });
+
+      await loading.present();
+
+      setTimeout(function () {
+        loading.dismiss();
+      }, this.timeout);
+    },
+    async presentLoadingWithOptions() {
+      const loading = await loadingController.create({
+        spinner: null,
+        duration: this.timeout,
+        message: "Click the backdrop to dismiss early...",
+        translucent: true,
+        cssClass: "custom-class custom-loading",
+        backdropDismiss: true,
+      });
+
+      await loading.present();
+
+      setTimeout(function () {
+        loading.dismiss();
+      }, this.timeout);
+    },
+  },
+  components: { IonButton },
 });
 </script>
-
-<style scoped>
-#container {
-  text-align: center;
-  
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  
-  color: #8c8c8c;
-  
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
-}
-</style>
